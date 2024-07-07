@@ -4,5 +4,5 @@ public interface BaseView {
 
     void showLoader();
     void hideLoader();
-    void showToast(String message);
+    void showMessage(String message);
 }

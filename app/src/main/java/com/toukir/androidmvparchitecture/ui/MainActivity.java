@@ -1,4 +1,4 @@
-package com.toukir.androidmvparchitecture;
+package com.toukir.androidmvparchitecture.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -7,13 +7,19 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.view.View;
 
+import com.toukir.androidmvparchitecture.R;
 import com.toukir.androidmvparchitecture.databinding.ActivityMainBinding;
 import com.toukir.androidmvparchitecture.databinding.NavHeaderMainBinding;
+import com.toukir.androidmvparchitecture.utils.NetworkChangeReceiver;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NetworkChangeReceiver.NetworkChangeListener{
 
+    NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver(this);
     private AppBarConfiguration mAppBarConfiguration;
     private NavController navController;
     private ActivityMainBinding binding;
@@ -22,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        registerReceiver(networkChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         setSupportActionBar(binding.appBarMain.toolbar);
 
@@ -52,5 +60,16 @@ public class MainActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onNetworkChanged(boolean isConnected) {
+        binding.appBarMain.contentMain.tvConnectionStatus.setVisibility(isConnected ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(networkChangeReceiver);
     }
 }

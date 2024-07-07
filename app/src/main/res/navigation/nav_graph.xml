@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/postFragment"
-        android:name="com.toukir.androidmvparchitecture.post.PostFragment"
+        android:name="com.toukir.androidmvparchitecture.ui.post.PostFragment"
         android:label="@string/menu_post"
         tools:layout="@layout/fragment_post" />
 
     <fragment
         android:id="@+id/todoFragment"
-        android:name="com.toukir.androidmvparchitecture.todo.TodoFragment"
+        android:name="com.toukir.androidmvparchitecture.ui.todo.TodoFragment"
         android:label="@string/menu_todo"
         tools:layout="@layout/fragment_todo" />
 </navigation>

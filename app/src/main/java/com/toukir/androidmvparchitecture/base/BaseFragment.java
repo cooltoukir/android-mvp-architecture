@@ -39,13 +39,13 @@ public abstract class BaseFragment<DB extends ViewDataBinding> extends Fragment 
         loadingDialog = builder.create();
     }
 
-    protected void showLoader() {
+    protected void showLoading() {
         if (loadingDialog != null && !loadingDialog.isShowing()) {
             loadingDialog.show();
         }
     }
 
-    protected void hideLoader() {
+    protected void hideLoading() {
         if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
         }
