@@ -1,5 +1,6 @@
 package com.toukir.androidmvparchitecture.ui.post;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -52,8 +53,16 @@ public class PostFragment extends BaseFragment<FragmentPostBinding> implements P
     }
 
     @Override
+    public Context getContext() {
+        return requireActivity();
+    }
+
+    @Override
     public void showPostList(@NonNull List<PostResponse> postResponseList, String message, boolean isFound) {
-        PostAdapter postAdapter = new PostAdapter(postResponseList);
-        binding.recyclerViewPost.setAdapter(postAdapter);
+        hideLoader();
+        requireActivity().runOnUiThread(() -> {
+            PostAdapter postAdapter = new PostAdapter(postResponseList);
+            binding.recyclerViewPost.setAdapter(postAdapter);
+        });
     }
 }

@@ -40,15 +40,19 @@ public abstract class BaseFragment<DB extends ViewDataBinding> extends Fragment 
     }
 
     protected void showLoading() {
+        requireActivity().runOnUiThread(() -> {
         if (loadingDialog != null && !loadingDialog.isShowing()) {
             loadingDialog.show();
         }
+        });
     }
 
     protected void hideLoading() {
+        requireActivity().runOnUiThread(() -> {
         if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
         }
+        });
     }
 
     public void showToast(String message) {

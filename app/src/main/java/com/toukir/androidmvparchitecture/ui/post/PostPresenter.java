@@ -1,6 +1,9 @@
 package com.toukir.androidmvparchitecture.ui.post;
 
 import com.toukir.androidmvparchitecture.data.model.PostResponse;
+import com.toukir.androidmvparchitecture.room.AppDatabase;
+import com.toukir.androidmvparchitecture.room.AppExecutors;
+import com.toukir.androidmvparchitecture.room.model.PostEntity;
 import com.toukir.androidmvparchitecture.utils.ConnectivityUtils;
 
 import java.util.ArrayList;
@@ -10,15 +13,19 @@ public class PostPresenter extends PostApiTaskImpl implements PostContract.Prese
 
     private final PostContract.View mPostView;
     private final ConnectivityUtils connectivityUtils;
+    private List<PostEntity> postEntityList;
+    private final AppDatabase appDB;
 
     public PostPresenter(PostContract.View mPostView) {
         super(mPostView);
         this.mPostView = mPostView;
         this.connectivityUtils = new ConnectivityUtils(mPostView.getContext());
+        appDB = AppDatabase.getInstance(mPostView.getContext());
     }
 
     @Override
     public void onPostTask() {
+        mPostView.showLoader();
         if (connectivityUtils.isOnline()) {
             onPostApiTask();
         } else {
@@ -28,7 +35,30 @@ public class PostPresenter extends PostApiTaskImpl implements PostContract.Prese
 
     @Override
     public void onPostDBTask() {
-        mPostView.showPostList(new ArrayList<>(), "Data From Local DB", false);
+        try {
+            List<PostResponse> postResponseList = new ArrayList<>();
+            AppExecutors.getInstance().diskIO().execute(() -> {
+                postEntityList = appDB.postDAO().getPost();
+                if (postEntityList != null && !postEntityList.isEmpty()) {
+                    for (PostEntity entity : postEntityList) {
+                        PostResponse postResponse = new PostResponse();
+                        postResponse.setId(entity.getId());
+                        postResponse.setUserId(entity.getUserId());
+                        postResponse.setTitle(entity.getTitle());
+                        postResponse.setBody(entity.getBody());
+                        postResponseList.add(postResponse);
+                    }
+                }
+
+                if (!postResponseList.isEmpty()) {
+                    mPostView.showPostList(postResponseList, "Data From Local DB", true);
+                } else {
+                    mPostView.showPostList(new ArrayList<>(), "Data From Local DB", false);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
