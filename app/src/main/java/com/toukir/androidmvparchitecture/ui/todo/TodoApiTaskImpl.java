@@ -13,7 +13,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public abstract class TodoApiTaskImpl implements TodoApiTask {
+public class TodoApiTaskImpl implements TodoApiTask {
 
     private final TodoContract.View mTodoView;
 
